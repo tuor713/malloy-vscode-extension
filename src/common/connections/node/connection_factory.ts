@@ -33,6 +33,7 @@ import {createBigQueryConnection} from '../bigquery_connection';
 import {createDuckDbConnection} from '../duckdb_connection';
 import {createPostgresConnection} from '../postgres_connection';
 import {isDuckDBAvailable} from '../../duckdb_availability';
+import {createTrinoConnection} from '../trino_connection';
 
 import {fileURLToPath} from 'url';
 import {ExternalConnectionFactory} from '../external_connection_factory';
@@ -53,6 +54,7 @@ export class DesktopConnectionFactory implements ConnectionFactory {
       ConnectionBackend.BigQuery,
       ConnectionBackend.Postgres,
       ConnectionBackend.External,
+      ConnectionBackend.Trino,
     ];
     if (isDuckDBAvailable) {
       available.push(ConnectionBackend.DuckDB);
@@ -97,6 +99,13 @@ export class DesktopConnectionFactory implements ConnectionFactory {
       case ConnectionBackend.External: {
         connection = await this.externalConnectionFactory.createOtherConnection(
           connectionConfig
+        );
+        break;
+      }
+      case ConnectionBackend.Trino: {
+        connection = await createTrinoConnection(
+          connectionConfig,
+          configOptions
         );
         break;
       }

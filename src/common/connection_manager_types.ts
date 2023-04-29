@@ -30,6 +30,7 @@ export enum ConnectionBackend {
   BigQuery = 'bigquery',
   Postgres = 'postgres',
   DuckDB = 'duckdb',
+  Trino = 'trino',
   External = 'external',
 }
 
@@ -37,7 +38,7 @@ export const ConnectionBackendNames: Record<ConnectionBackend, string> = {
   [ConnectionBackend.BigQuery]: 'BigQuery',
   [ConnectionBackend.Postgres]: 'Postgres',
   [ConnectionBackend.DuckDB]: 'DuckDB',
-  // TODO(figutierrez): Remove beta once ready.
+  [ConnectionBackend.Trino]: 'Trino',
   [ConnectionBackend.External]: 'External (Beta)',
 };
 
@@ -106,10 +107,22 @@ export interface ExternalConnectionConfig extends BaseConnectionConfig {
   configParameters?: MalloyConnectionConfig;
 }
 
+export interface TrinoConnectionConfig extends BaseConnectionConfig {
+  backend: ConnectionBackend.Trino;
+  server?: string;
+  username?: string;
+  password?: string;
+  catalog?: string;
+  schema?: string;
+  source?: string;
+  useKeychainPassword?: boolean;
+}
+
 export type ConnectionConfig =
   | BigQueryConnectionConfig
   | PostgresConnectionConfig
   | DuckDBConnectionConfig
+  | TrinoConnectionConfig
   | ExternalConnectionConfig;
 
 export interface ConfigOptions {

@@ -47,6 +47,7 @@ import './bigquery_connection_editor';
 import './duckdb_connection_editor';
 import './external_connection_editor';
 import './postgres_connection_editor';
+import './trino_connection_editor';
 
 provideVSCodeDesignSystem().register(
   vsCodeButton(),
@@ -103,6 +104,7 @@ export class ConnectionEditor extends LitElement {
     ConnectionBackend.Postgres,
     ConnectionBackend.DuckDB,
     ConnectionBackend.External,
+    ConnectionBackend.Trino,
   ];
 
   override render() {
@@ -140,7 +142,8 @@ export class ConnectionEditor extends LitElement {
                 @change=${({target: {value}}: {target: HTMLInputElement}) => {
                   this.setConfig({
                     ...this.config,
-                    backend: value as ConnectionBackend,
+                    // TODO unclear why this is giving a type error with just ConnectionBackend
+                    backend: value as ConnectionBackend.Trino,
                   });
                 }}
                 value=${this.config.backend}
@@ -176,6 +179,11 @@ export class ConnectionEditor extends LitElement {
               .config=${this.config}
               .setConfig=${this.setConfig}
             ></duckdb-connection-editor>`
+          : this.config.backend === ConnectionBackend.Trino
+          ? html`<trino-connection-editor
+              .config=${this.config}
+              .setConfig=${this.setConfig}
+            ></trino-connection-editor>`
           : this.config.backend === ConnectionBackend.External
           ? html`<external-connection-editor
               .config=${this.config}
